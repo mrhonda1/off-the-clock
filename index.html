@@ -85,7 +85,7 @@
         <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
         <span class="font-bold tracking-wide text-slate-200">OFF THE CLOCK</span>
         <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-semibold">
-          Accounting Firm Edition v2.4
+          Accounting Firm Edition v2.5
         </span>
       </div>
     </div>
@@ -103,7 +103,6 @@
 
   <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
 
-    <!-- SIDEBAR NAVIGATION -->
     <aside class="w-full md:w-64 bg-[#080d1e] border-r border-[#1e305e] p-4 flex flex-col justify-between shrink-0">
       <div class="space-y-6">
         
@@ -124,19 +123,27 @@
         <nav class="space-y-1.5 text-xs font-medium">
           <button onclick="switchTab('dashboard')" id="side-nav-dashboard" class="side-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <i class="fa-solid fa-gauge-high w-4 text-center"></i>
-            <span>Dashboard & Breaks</span>
+            <span>Dashboard</span>
+          </button>
+          <button onclick="switchTab('schedule')" id="side-nav-schedule" class="side-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-[#132042] hover:text-slate-200 transition">
+            <i class="fa-regular fa-calendar-plus w-4 text-center"></i>
+            <span>Schedule Break</span>
+          </button>
+          <button onclick="openTimerModal()" class="side-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-[#132042] hover:text-slate-200 transition">
+            <i class="fa-solid fa-play w-4 text-center text-emerald-400"></i>
+            <span>Active Timer</span>
           </button>
           <button onclick="switchTab('team')" id="side-nav-team" class="side-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-[#132042] hover:text-slate-200 transition">
             <i class="fa-solid fa-users-viewfinder w-4 text-center"></i>
-            <span>Who's Off the Clock</span>
+            <span>Team Status</span>
           </button>
           <button onclick="switchTab('activities')" id="side-nav-activities" class="side-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-[#132042] hover:text-slate-200 transition">
             <i class="fa-solid fa-compass w-4 text-center"></i>
-            <span>Williamsburg Activities</span>
+            <span>Activities Near You</span>
           </button>
           <button onclick="switchTab('logs')" id="side-nav-logs" class="side-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-[#132042] hover:text-slate-200 transition">
             <i class="fa-solid fa-clock-rotate-left w-4 text-center"></i>
-            <span>My Break Logs</span>
+            <span>Break Logs</span>
           </button>
         </nav>
 
@@ -208,12 +215,9 @@
       </div>
 
       <section id="tab-dashboard" class="tab-page space-y-6">
-        
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <!-- Column 1 & 2: Upcoming Break Schedule & Quick Actions -->
           <div class="lg:col-span-2 space-y-6">
-            
             <!-- Scheduled Breaks Box -->
             <div class="glass-card rounded-2xl p-5 border border-[#1e305e]">
               <div class="flex items-center justify-between mb-4">
@@ -233,7 +237,7 @@
               </div>
 
               <div id="scheduled-breaks-list" class="space-y-3">
-                <!-- Dynamically Populated by JS -->
+                <!-- Populated via JS -->
               </div>
             </div>
 
@@ -254,7 +258,6 @@
                 </div>
               </div>
             </div>
-
           </div>
 
           <!-- Column 3: Quick Williamsburg Spotlight -->
@@ -263,28 +266,79 @@
               <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center space-x-2">
                   <i class="fa-solid fa-location-dot text-emerald-400"></i>
-                  <h2 class="text-sm font-bold text-white">Williamsburg Walkable Spots</h2>
+                  <h2 class="text-sm font-bold text-white">Activities Near You</h2>
                 </div>
-                <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">Near Office</span>
+                <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">Williamsburg</span>
               </div>
 
               <div id="dashboard-spots-preview" class="space-y-3">
-                <!-- Dynamically Populated -->
+                <!-- Populated via JS -->
               </div>
             </div>
 
             <button onclick="switchTab('activities')" class="mt-4 w-full bg-[#1e305e]/50 hover:bg-[#1e305e] text-slate-300 text-xs py-2.5 rounded-xl border border-slate-700 font-medium transition flex items-center justify-center space-x-2">
-              <span>Explore All Williamsburg Activities</span>
+              <span>Explore All Activities Near You</span>
               <i class="fa-solid fa-arrow-right text-[10px]"></i>
             </button>
           </div>
 
         </div>
+      </section>
 
+      <section id="tab-schedule" class="tab-page hidden space-y-6">
+        <div class="glass-card rounded-2xl p-6 border border-[#1e305e] max-w-2xl mx-auto">
+          <div class="mb-5">
+            <h2 class="text-base font-bold text-white">Schedule Future Break Slot</h2>
+            <p class="text-xs text-slate-400">Reserve your mandatory 30-minute busy season break and notify your audit team</p>
+          </div>
+
+          <form onsubmit="handleDedicatedScheduleForm(event)" class="space-y-4 text-xs">
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Select Date</label>
+              <input type="date" id="ded-sch-date" required class="w-full bg-[#080d1e] border border-[#1e305e] text-white rounded-xl p-3 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-slate-300 font-medium mb-1">Start Time Slot</label>
+                <select id="ded-sch-start" class="w-full bg-[#080d1e] border border-[#1e305e] text-white rounded-xl p-3 focus:outline-none focus:border-emerald-500">
+                  <option value="11:30 AM">11:30 AM</option>
+                  <option value="01:00 PM">01:00 PM</option>
+                  <option value="02:00 PM" selected>02:00 PM (Usual Slot)</option>
+                  <option value="03:30 PM">03:30 PM</option>
+                  <option value="04:30 PM">04:30 PM</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-300 font-medium mb-1">Duration</label>
+                <input type="text" value="30 Mins (Firm Mandate)" disabled class="w-full bg-slate-900 border border-slate-800 text-slate-500 rounded-xl p-3 font-semibold">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Select Activity Spot</label>
+              <select id="ded-sch-activity" class="w-full bg-[#080d1e] border border-[#1e305e] text-white rounded-xl p-3 focus:outline-none focus:border-emerald-500">
+                <option value="Colonial Brick Walk">Colonial Brick Walk (Williamsburg)</option>
+                <option value="W&M Sunken Garden Lawn Stroll">W&M Sunken Garden Lawn Stroll</option>
+                <option value="Bassett Hall Heritage Woodland Trail">Bassett Hall Woodland Trail</option>
+                <option value="Merchants Square Outdoor Coffee">Merchants Square Outdoor Coffee</option>
+                <option value="Muscarelle Museum Sculpture Court">Muscarelle Museum Sculpture Court</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Additional Notes</label>
+              <input type="text" id="ded-sch-notes" placeholder="e.g. Walking with Marcus from Audit team..." class="w-full bg-[#080d1e] border border-[#1e305e] text-white rounded-xl p-3 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold py-3.5 rounded-xl transition shadow-lg shadow-emerald-500/20 text-sm">
+              Confirm & Broadcast to Engagement Team
+            </button>
+          </form>
+        </div>
       </section>
 
       <section id="tab-team" class="tab-page hidden space-y-6">
-        
         <!-- SECTION 1: MY ENGAGEMENT TEAM (AUDIT ALPHA) -->
         <div class="glass-card rounded-2xl p-6 border border-[#1e305e]">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
@@ -304,7 +358,7 @@
 
           <!-- Team Cards Grid -->
           <div id="engagement-team-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Dynamic JS Injection -->
+            <!-- Populated via JS -->
           </div>
         </div>
 
@@ -327,20 +381,18 @@
 
           <!-- Directory Table/Cards -->
           <div id="firm-directory-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <!-- Dynamic JS Injection -->
+            <!-- Populated via JS -->
           </div>
         </div>
-
       </section>
 
       <section id="tab-activities" class="tab-page hidden space-y-6">
-        
         <div class="glass-card rounded-2xl p-6 border border-[#1e305e]">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             <div>
               <div class="flex items-center space-x-2">
-                <h2 class="text-lg font-bold text-white">Williamsburg, VA Activity Finder</h2>
-                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-0.5 rounded-full font-semibold">Affordable & Nearby</span>
+                <h2 class="text-lg font-bold text-white">Activities Near You</h2>
+                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-0.5 rounded-full font-semibold">Williamsburg, VA</span>
               </div>
               <p class="text-xs text-slate-400 mt-1">Discover 30-minute affordable ways to step away from audit work papers</p>
             </div>
@@ -349,7 +401,7 @@
             <div class="flex flex-wrap items-center gap-2">
               <div class="relative">
                 <i class="fa-solid fa-location-dot absolute left-3 top-2.5 text-emerald-400 text-xs"></i>
-                <input type="text" id="location-input" value="Williamsburg, VA" onchange="showToast('Searching activities in: ' + this.value)" class="bg-[#080d1e] border border-[#1e305e] text-xs text-white pl-8 pr-3 py-2 rounded-xl focus:outline-none focus:border-emerald-500 w-44">
+                <input type="text" id="location-input" value="Williamsburg, VA" onchange="showToast('Showing locations near: ' + this.value)" class="bg-[#080d1e] border border-[#1e305e] text-xs text-white pl-8 pr-3 py-2 rounded-xl focus:outline-none focus:border-emerald-500 w-44">
               </div>
 
               <div class="flex items-center bg-[#080d1e] border border-[#1e305e] p-1 rounded-xl text-xs">
@@ -363,14 +415,12 @@
 
           <!-- Activity Cards Grid -->
           <div id="activities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Dynamic JS Injection -->
+            <!-- Populated via JS -->
           </div>
         </div>
-
       </section>
 
       <section id="tab-logs" class="tab-page hidden space-y-6">
-        
         <div class="glass-card rounded-2xl p-6 border border-[#1e305e]">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
@@ -397,12 +447,11 @@
                 </tr>
               </thead>
               <tbody id="logs-table-body" class="divide-y divide-[#1e305e]/50 text-slate-300">
-                <!-- Dynamically Populated -->
+                <!-- Populated via JS -->
               </tbody>
             </table>
           </div>
         </div>
-
       </section>
 
     </main>
@@ -518,7 +567,7 @@
               <option value="W&M Sunken Garden Lawn Stroll">W&M Sunken Garden Lawn Stroll</option>
               <option value="Bassett Hall Heritage Woodland Trail">Bassett Hall Woodland Trail</option>
               <option value="Merchants Square Outdoor Coffee">Merchants Square Outdoor Coffee</option>
-              <option value="Mindfulness Unplug">Mindfulness Unplug</option>
+              <option value="Muscarelle Museum Sculpture Court">Muscarelle Museum Sculpture Court</option>
             </select>
           </div>
 
@@ -586,10 +635,6 @@
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
   <script>
-    /* ========================================================================= */
-    /* STATE MANAGEMENT                                                          */
-    /* ========================================================================= */
-    
     let userProfile = {
       name: "Sarah Jenkins, CPA",
       role: "Senior Auditor",
@@ -677,7 +722,6 @@
       { date: "2026-09-28", start: "01:30 PM", end: "02:00 PM", duration: "30 mins", activity: "Merchants Square Coffee Nook", note: "Grabbed green tea with Marcus. Enjoyed outdoor seating in the crisp air.", verified: true },
       { date: "2026-09-25", start: "03:00 PM", end: "03:30 PM", duration: "30 mins", activity: "W&M Sunken Garden Lawn Stroll", note: "Did 30 minutes of mindfulness breathwork on the lawn.", verified: true }
     ];
-
 
     function switchTab(tabName) {
       document.querySelectorAll('.tab-page').forEach(el => el.classList.add('hidden'));
@@ -893,7 +937,6 @@
       `).join('');
     }
 
-
     let timerInterval = null;
     let secondsElapsed = 0;
     let isTimerRunning = false;
@@ -1028,7 +1071,6 @@
       showToast(`Playing ambient soundscape: ${type}`);
     }
 
-
     function openScheduleModal() {
       document.getElementById('schedule-modal').classList.remove('hidden');
     }
@@ -1056,6 +1098,27 @@
       renderScheduledBreaks();
       closeScheduleModal();
       showToast("📅 Break successfully scheduled and broadcasted to engagement team!");
+    }
+
+    function handleDedicatedScheduleForm(e) {
+      e.preventDefault();
+      const date = document.getElementById('ded-sch-date').value;
+      const start = document.getElementById('ded-sch-start').value;
+      const act = document.getElementById('ded-sch-activity').value;
+      const note = document.getElementById('ded-sch-notes').value;
+
+      scheduledBreaks.unshift({
+        id: Date.now(),
+        date: date,
+        time: `${start} - 02:30 PM`,
+        activity: act,
+        note: note,
+        status: "Upcoming"
+      });
+
+      renderScheduledBreaks();
+      switchTab('dashboard');
+      showToast("📅 Break successfully scheduled!");
     }
 
     function startScheduledBreak(activityTitle) {
@@ -1106,8 +1169,10 @@
 
     window.onload = function() {
       const today = new Date().toISOString().split('T')[0];
-      const dateInput = document.getElementById('sch-date');
-      if (dateInput) dateInput.value = today;
+      const dateInput1 = document.getElementById('sch-date');
+      const dateInput2 = document.getElementById('ded-sch-date');
+      if (dateInput1) dateInput1.value = today;
+      if (dateInput2) dateInput2.value = today;
 
       renderUserProfile();
       renderScheduledBreaks();
